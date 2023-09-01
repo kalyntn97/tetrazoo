@@ -1,0 +1,27 @@
+.box {
+  display: flex;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(20, 1fr);
+  border: 1px solid black;
+  width: 400px;
+  height: 800px;
+}
+
+.cell {
+  border: 1px solid black;
+  background-color: rgb(255, 196, 247);
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+} 
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+}

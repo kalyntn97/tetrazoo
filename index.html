@@ -5,9 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="./js/app.js" type="module"></script>
     <link rel="stylesheet" href="./css/style.css">
-    <title>Document</title>
+    <title>MeowTris</title>
 </head>
 <body>
+    <h1>MeowTris</h1>
+    <div class="box">
+        <div class="leftColumn">
+            <p>Score: <span id="score">0</span></p>
+            <p>Level: <span id="level">1</span></p>
+            <p>Highest score: <span id="highestScore">0</span></p>
+            <p id="Instructions">Instructions:
+                Space: Drop 
+                ↓: Move Down
+                ↑: Rotate
+                ←→: Move left/right
+            </p>
+        </div>
+        <div class="board"></div>
+        <div class="rightColumn">
+            <button class="button", id="startBtn">Start</button>
+            <button class="button", id="stopBtn">Pause</button>
+        </div>
+    </div>
     
 </body>
 </html>

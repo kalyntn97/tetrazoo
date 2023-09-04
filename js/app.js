@@ -24,22 +24,29 @@ document.addEventListener('keydown', userInput)
 //   getCurrentAndNextT()
 //   spawnCurrentT(currentT)
 //   // displayNextT()
-// }
 
 getCurrentAndNextT()
 
-spawnCurrentT(currentT)
+spawnCurrentT()
 
 function spawnCurrentT() {
+//   for (let i = 0; i < currentT.Tarr.length; i++) {
+//     for (let j = 0; j < currentT.Tarr[0].length; j++) {
+//       if (currentT.row - 1 >= 0) {
+//         playBoard[currentT.row - 1][currentT.column + j] = 0
+//       }
+//    }
+//  } 
   for (let i = 0; i < currentT.Tarr.length; i++) {
-     for (let j = 0; j < currentT.Tarr[0].length; j++) {
-       playBoard[currentT.row + i][currentT.column + j] = currentT.Tarr[i][j]
-    }
-  } 
+    for (let j = 0; j < currentT.Tarr[0].length; j++) {
+      playBoard[currentT.row + i][currentT.column + j] = currentT.Tarr[i][j]
+      if (currentT.row - 1 >= 0) {
+        playBoard[currentT.row - 1][currentT.column + j] = 0
+      } 
   /* Game Over if Current T cannot move of board */
+    }
+  }
 }
-console.log(currentT, playBoard)
-
 function getCurrentAndNextT() {
   if (TSequence.length === 0) {
     generateNextT()
@@ -66,12 +73,41 @@ function generateNextT() {
   }
   randomT.row = row
   randomT.column = column
-  return TSequence.push(randomT)
+  TSequence.push(randomT)
 }
 
+function rotatecurrentT() {
+  const after = currentT.Tarr.map((row, i) =>
+    row.map((column, j) => currentT.Tarr[currentT.Tarr.length - j - 1][i]))
+  currentT.Tarr = after
+}
 
+function userInput(e) {
+  if (e.which === 38) {
+    console.log('Up Arrow Key')
+    rotatecurrentT()
+    spawnCurrentT()
+    console.log(currentT.Tarr)
+    console.log(playBoard)
+  } else if (e.which === 40) {
+    console.log('Down Arrow Key')
+    currentT.row = currentT.row + 1
+    spawnCurrentT()
+    console.log(playBoard)
+  } else if (e.which === 37) {
+    console.log('Left Arrow Key')
+    currentT.column = currentT.column - 1
+    spawnCurrentT()
+    console.log(playBoard)
+  } else if (e.which === 39) { 
+    console.log('Right Arrow Key')
+    currentT.column = currentT.column + 1
+    spawnCurrentT()
+    console.log(playBoard)
+  }
+}
 
-//create the play field and preview matri
+//create the play field and preview matrix
 const board = document.querySelector('.board')
 for (let i = 2; i < playBoard.length; i++) {
   for (let j = 0; j < playBoard[0].length; j++) {
@@ -90,26 +126,5 @@ for (let i = 0; i < nextT.length; i++) {
     preview.appendChild(cell)
     cell.innerHTML = nextT[i][j]
     console.log(nextT)
-  }
-}
-
-function userInput(e) {
-  if (e.which === 38) {
-    console.log('Up Arrow Key')
-  } else if (e.which === 40) {
-    console.log('Down Arrow Key')
-    currentT.row = currentT.row + 1
-    spawnCurrentT()
-    console.log(playBoard)
-  } else if (e.which === 37) {
-    console.log('Left Arrow Key')
-    currentT.column = currentT.column - 1
-    spawnCurrentT()
-    console.log(playBoard)
-  } else if (e.which === 39) { 
-    console.log('Right Arrow Key')
-    currentT.column = currentT.column + 1
-    spawnCurrentT()
-    console.log(playBoard)
   }
 }

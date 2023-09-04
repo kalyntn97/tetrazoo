@@ -15,7 +15,7 @@ const stopBtn = document.getElementById('stopBtn')
 /*----------------------------- Event Listeners -----------------------------*/
 // startBtn.addEventListener('click', render)
 // stopBtn.addEventListener('click', render)
-
+document.addEventListener('keydown', userInput)
 
 /*-------------------------------- Functions --------------------------------*/
 // function render() {
@@ -28,15 +28,17 @@ const stopBtn = document.getElementById('stopBtn')
 
 getCurrentAndNextT()
 
-spawnCurrentT(playBoard, currentT)
+spawnCurrentT(currentT)
 
-function spawnCurrentT(playBoard, currentT) {
-  for (let i = 0; i <currentT.Tarr.length; i++) {
+function spawnCurrentT() {
+  for (let i = 0; i < currentT.Tarr.length; i++) {
      for (let j = 0; j < currentT.Tarr[0].length; j++) {
-       playBoard[i][currentT.column + j] = currentT.Tarr[i][j]
+       playBoard[currentT.row + i][currentT.column + j] = currentT.Tarr[i][j]
     }
-  }
+  } 
+  /* Game Over if Current T cannot move of board */
 }
+console.log(currentT, playBoard)
 
 function getCurrentAndNextT() {
   if (TSequence.length === 0) {
@@ -55,7 +57,7 @@ function generateNextT() {
     name: Object.keys(tetrominos)[randomNum],
     Tarr: Object.values(tetrominos)[randomNum]
   }
-  const row = (randomT.name === 'I') ? 1 : 0 /* row at which T spawns on board */
+  let row = 0 /* row at which T spawns on board */
   let column /* column at which T spawns on board */
   if (randomT.name === 'O') {
     column = playBoard[0].length / 2 - 1
@@ -69,24 +71,45 @@ function generateNextT() {
 
 
 
-
-
-
-//create the play field and preview matrix
+//create the play field and preview matri
 const board = document.querySelector('.board')
-for (let i = 0; i < 10; i++) {
-  for (let j = 0; j < 20; j++) {
+for (let i = 2; i < playBoard.length; i++) {
+  for (let j = 0; j < playBoard[0].length; j++) {
     const cell = document.createElement('div')
     cell.classList.add('cell')
     board.appendChild(cell)
+    cell.innerHTML = playBoard[i][j]
   }
 }
 
 const preview = document.querySelector('.preview')
-for (let i = 0; i < 4; i++) {
-  for (let j = 0; j < 4; j++) {
+for (let i = 0; i < nextT.length; i++) {
+  for (let j = 0; j < nextT[0].length; j++) {
     const cell = document.createElement('div')
     cell.classList.add('cell')
     preview.appendChild(cell)
+    cell.innerHTML = nextT[i][j]
+    console.log(nextT)
+  }
+}
+
+function userInput(e) {
+  if (e.which === 38) {
+    console.log('Up Arrow Key')
+  } else if (e.which === 40) {
+    console.log('Down Arrow Key')
+    currentT.row = currentT.row + 1
+    spawnCurrentT()
+    console.log(playBoard)
+  } else if (e.which === 37) {
+    console.log('Left Arrow Key')
+    currentT.column = currentT.column - 1
+    spawnCurrentT()
+    console.log(playBoard)
+  } else if (e.which === 39) { 
+    console.log('Right Arrow Key')
+    currentT.column = currentT.column + 1
+    spawnCurrentT()
+    console.log(playBoard)
   }
 }

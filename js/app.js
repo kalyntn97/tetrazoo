@@ -4,7 +4,7 @@ import tetrominos from './data.js'
 /*---------------------------- Variables (state) ----------------------------*/
 let currentT, nextT, bottomEdge
 let TSequence = []
-let playBoard = Array(22).fill().map(() => Array(10).fill(0))
+let playBoard = Array(20).fill().map(() => Array(10).fill(0))
 
 
 /*------------------------ Cached Element References ------------------------*/
@@ -33,13 +33,15 @@ spawnCurrentT()
 function spawnCurrentT() {
   for (let i = 0; i < currentT.Tarr.length; i++) {
     for (let j = 0; j < currentT.Tarr[0].length; j++) {
+      
+      /* Game Over if Current T cannot move of board */
       playBoard[currentT.row + i][currentT.column + j] = currentT.Tarr[i][j]
-  /* Game Over if Current T cannot move of board */
     }
+    displayCurrentT(currentT)
+    displayNextT(nextT)
   }
-  displayCurrentT(currentT)
-  displayNextT(nextT)
 }
+
 function getCurrentAndNextT() {
   if (TSequence.length === 0) {
     generateNextT()
@@ -96,28 +98,50 @@ function userInput(e) {
     spawnCurrentT()
     console.log(currentT.Tarr)
     console.log(playBoard)
+    console.log(currentT.row, currentT.column)
   /* Down arrow */
   } else if (e.which === 40) {
     clearPlayBoard(currentT)
-    currentT.row = currentT.row + 1
+    if (!posInvalid(currentT)) {
+      currentT.row = currentT.row + 1
+    } else {
+        currentT.row = currentT.row
+    }
     spawnCurrentT()
     console.log(playBoard)
+    console.log(currentT.row, currentT.column)
   /* Left arrow */
   } else if (e.which === 37) {
     clearPlayBoard(currentT)
-    currentT.column = currentT.column - 1
+    if (!posInvalid(currentT)) {
+      currentT.column = currentT.column - 1
+    } else {
+      currentT.column = currentT.column
+    }
     spawnCurrentT()
     console.log(playBoard)
+    console.log(currentT.row, currentT.column)
   /* Right arrow */
   } else if (e.which === 39) { 
     clearPlayBoard(currentT)
-    currentT.column = currentT.column + 1
+    if (!posInvalid(currentT)) {
+      currentT.column = currentT.column + 1
+    } else {
+      currentT.column = currentT.column
+    }
     spawnCurrentT()
     console.log(playBoard)
+    console.log(currentT.row, currentT.column)
   }
 }
 
-// create the play field and preview matrix
+function posInvalid(array) {
+  const isInvalidRow =  array.row + array.Tarr.length > playBoard.length
+  const isInvalidColumn = array.column <= 0 || array.column + array.Tarr[0].length >= playBoard[0].length
+  return isInvalidRow || isInvalidColumn
+}
+
+
 function displayCurrentT(array) {
   for (let i = 0; i < array.Tarr.length; i++) {
     for (let j = 0; j < array.Tarr[0].length; j++) {

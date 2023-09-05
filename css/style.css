@@ -22,7 +22,29 @@
 
 .cell {
   border: 1px solid black;
-  background-color: rgb(255, 196, 247);
+}
+
+
+.I { 
+  background-color: #00FFFF;
+}
+.O {
+  background-color: #FFFF00;
+}
+.L  {
+  background-color: #800080;
+}
+.J { 
+  background-color: #008000;
+}
+.T {
+  background-color: #ff0000;
+}
+.Z {
+  background-color: #0000FF;
+}
+.S {
+  background-color: #FBCEB1;
 }
 
 .leftColumn {
@@ -34,3 +56,4 @@
   display: flex;
   flex-direction: column;
 }
+

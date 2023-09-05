@@ -10,7 +10,8 @@ let playBoard = Array(22).fill().map(() => Array(10).fill(0))
 /*------------------------ Cached Element References ------------------------*/
 const startBtn = document.getElementById('startBtn')
 const stopBtn = document.getElementById('stopBtn')
-
+const board = document.querySelector('.board')
+const preview = document.querySelector('.preview')
 
 /*----------------------------- Event Listeners -----------------------------*/
 // startBtn.addEventListener('click', render)
@@ -30,22 +31,14 @@ getCurrentAndNextT()
 spawnCurrentT()
 
 function spawnCurrentT() {
-//   for (let i = 0; i < currentT.Tarr.length; i++) {
-//     for (let j = 0; j < currentT.Tarr[0].length; j++) {
-//       if (currentT.row - 1 >= 0) {
-//         playBoard[currentT.row - 1][currentT.column + j] = 0
-//       }
-//    }
-//  } 
   for (let i = 0; i < currentT.Tarr.length; i++) {
     for (let j = 0; j < currentT.Tarr[0].length; j++) {
       playBoard[currentT.row + i][currentT.column + j] = currentT.Tarr[i][j]
-      if (currentT.row - 1 >= 0) {
-        playBoard[currentT.row - 1][currentT.column + j] = 0
-      } 
   /* Game Over if Current T cannot move of board */
     }
   }
+  displayCurrentT(currentT)
+  displayNextT(nextT)
 }
 function getCurrentAndNextT() {
   if (TSequence.length === 0) {
@@ -76,6 +69,19 @@ function generateNextT() {
   TSequence.push(randomT)
 }
 
+function clearPlayBoard(previousT) {
+  for (let i = 0; i < previousT.Tarr.length; i++) {
+    for (let j = 0; j < previousT.Tarr[0].length; j++) {
+      if (previousT.Tarr[i][j] === 1) {
+        playBoard[currentT.row + i][currentT.column + j] = 0
+      }
+    }
+  }
+  while (board.firstChild) {
+    board.removeChild(board.firstChild)
+  }
+}
+
 function rotatecurrentT() {
   const after = currentT.Tarr.map((row, i) =>
     row.map((column, j) => currentT.Tarr[currentT.Tarr.length - j - 1][i]))
@@ -83,48 +89,59 @@ function rotatecurrentT() {
 }
 
 function userInput(e) {
+  /* Up arrow */
   if (e.which === 38) {
-    console.log('Up Arrow Key')
+    clearPlayBoard(currentT)
     rotatecurrentT()
     spawnCurrentT()
     console.log(currentT.Tarr)
     console.log(playBoard)
+  /* Down arrow */
   } else if (e.which === 40) {
-    console.log('Down Arrow Key')
+    clearPlayBoard(currentT)
     currentT.row = currentT.row + 1
     spawnCurrentT()
     console.log(playBoard)
+  /* Left arrow */
   } else if (e.which === 37) {
-    console.log('Left Arrow Key')
+    clearPlayBoard(currentT)
     currentT.column = currentT.column - 1
     spawnCurrentT()
     console.log(playBoard)
+  /* Right arrow */
   } else if (e.which === 39) { 
-    console.log('Right Arrow Key')
+    clearPlayBoard(currentT)
     currentT.column = currentT.column + 1
     spawnCurrentT()
     console.log(playBoard)
   }
 }
 
-//create the play field and preview matrix
-const board = document.querySelector('.board')
-for (let i = 2; i < playBoard.length; i++) {
-  for (let j = 0; j < playBoard[0].length; j++) {
-    const cell = document.createElement('div')
-    cell.classList.add('cell')
-    board.appendChild(cell)
-    cell.innerHTML = playBoard[i][j]
+// create the play field and preview matrix
+function displayCurrentT(array) {
+  for (let i = 0; i < array.Tarr.length; i++) {
+    for (let j = 0; j < array.Tarr[0].length; j++) {
+      if (array.Tarr[i][j] === 1) {
+        const cell = document.createElement('div')
+        cell.classList.add('cell', `${array.name}`)
+        cell.style.gridRow = array.row + i + 1
+        cell.style.gridColumn = array.column + j + 1
+        board.appendChild(cell)
+      }
+    }
   }
 }
 
-const preview = document.querySelector('.preview')
-for (let i = 0; i < nextT.length; i++) {
-  for (let j = 0; j < nextT[0].length; j++) {
-    const cell = document.createElement('div')
-    cell.classList.add('cell')
-    preview.appendChild(cell)
-    cell.innerHTML = nextT[i][j]
-    console.log(nextT)
+function displayNextT(array) {
+  for (let i = 0; i < array.Tarr.length; i++) {
+    for (let j = 0; j < array.Tarr[0].length; j++) {
+      if (array.Tarr[i][j] === 1) {
+        const cell = document.createElement('div')
+        cell.classList.add('cell', `${array.name}`)
+        cell.style.gridRow = i + 1
+        cell.style.gridColumn = j + 1
+        preview.appendChild(cell)
+      }
+    }
   }
 }

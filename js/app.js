@@ -6,7 +6,6 @@ let currentT, nextT
 let TSequence = []
 let playBoard 
 let lockedT = []
-// const frameDuration = 100
 
 /*------------------------ Cached Element References ------------------------*/
 const startBtn = document.getElementById('startBtn')
@@ -16,7 +15,7 @@ const preview = document.querySelector('.preview')
 
 /*----------------------------- Event Listeners -----------------------------*/
 document.addEventListener('DOMContentLoaded', init)
-// startBtn.addEventListener('click', gameLoop)
+startBtn.addEventListener('click', init)
 // stopBtn.addEventListener('click', gameOver)
 document.addEventListener('keydown', userInput)
 
@@ -29,33 +28,33 @@ function init() {
 }
 
 function render() {
-  displayCurrentT(currentT)
-  displayNextT(nextT)
+  displayCurrentT()
+  displayNextT()
 }
 
-function displayCurrentT(array) {
-  for (let i = 0; i < array.Tarr.length; i++) {
-    for (let j = 0; j < array.Tarr[0].length; j++) {
-      if (array.Tarr[i][j] === 1) {
+function displayCurrentT() {
+  for (let i = 0; i < currentT.Tarr.length; i++) {
+    for (let j = 0; j < currentT.Tarr[0].length; j++) {
+      if (currentT.Tarr[i][j] === 1) {
         const cell = document.createElement('div')
-        cell.classList.add('cell', `${array.name}`)
-        cell.style.gridRow = array.row + i + 1
-        cell.style.gridColumn = array.column + j + 1
+        cell.classList.add('cell', `${currentT.name}`)
+        cell.style.gridRow = currentT.row + i + 1
+        cell.style.gridColumn = currentT.column + j + 1
         board.appendChild(cell)
       }
     }
   }
 }
 
-function displayNextT(array) {
+function displayNextT() {
   while (preview.firstChild) {
     preview.removeChild(preview.firstChild)
   }
-  for (let i = 0; i < array.Tarr.length; i++) {
-    for (let j = 0; j < array.Tarr[0].length; j++) {
-      if (array.Tarr[i][j] === 1) {
+  for (let i = 0; i < nextT.Tarr.length; i++) {
+    for (let j = 0; j < nextT.Tarr[0].length; j++) {
+      if (nextT.Tarr[i][j] === 1) {
         const cell = document.createElement('div')
-        cell.classList.add('cell', `${array.name}`)
+        cell.classList.add('cell', `${nextT.name}`)
         cell.style.gridRow = i + 1
         cell.style.gridColumn = j + 1
         preview.appendChild(cell)
@@ -67,12 +66,11 @@ function displayNextT(array) {
 function displayLockedT() {
   for (const t of lockedT) {
     const cell = document.createElement('div')
-        cell.classList.add('cell', 'locked', `${t.name}`)
-        cell.style.gridRow = t.row + i + 1
-        cell.style.gridColumn = t.column + j + 1
-        board.appendChild(cell)
+    cell.classList.add('cell', 'locked', `${t.name}`)
+    cell.style.gridRow = t.row + tetrominos[t.name].length
+    cell.style.gridColumn = t.column + tetrominos[t.name][0].length
+    board.appendChild(cell)
   }
-  console.log(lockedT)
 }
 
 function getNextT() {
@@ -104,27 +102,23 @@ function generateRandomT() {
 }
 
 function lockCurrentT() {
-  clearPlayBoard(currentT)
-  if (posValid(currentT,0)) {
-    currentT.row = currentT.row + 1
-  } else {
-    for (let i = 0; i < currentT.Tarr.length; i++) {
-      for (let j = 0; j < currentT.Tarr[0].length; j++) {
-        if (currentT.Tarr[i][j] === 1) {
-          const name = currentT.name  
-          const row = currentT.row + i
-          const column = currentT.column + j
-          playBoard[row][column] = 1
-          lockedT.push({name, row, column})       
-        }
+  clearPlayBoard()
+  for (let i = 0; i < currentT.Tarr.length; i++) {
+    for (let j = 0; j < currentT.Tarr[0].length; j++) {
+      if (currentT.Tarr[i][j] === 1) {
+        playBoard[currentT.row + i][currentT.column + j] = 1
       }
     }
-    displayLockedT()
-    clearFullRows()
-    currentT = nextT
-    nextT = getNextT()
-    
   }
+  const row = currentT.row
+  const column = currentT.column
+  const name = currentT.name
+  lockedT.push({name, row, column})
+  console.log(lockedT)
+  displayLockedT()
+  clearFullRows()
+  clearPlayBoard()
+  currentT = nextT
   render()
 }
   
@@ -144,39 +138,37 @@ function clearFullRows() {
 /* Listen to keyboard events */
 function userInput(e) {
   /* Up arrow */
-  clearPlayBoard(currentT)
+  clearPlayBoard()
   if (e.which === 38) {
-    if (posValid(currentT, 0)) {
+    if (posValid(0)) {
       rotateCurrentT(currentT)
     }
-    lockCurrentT()
     console.log(playBoard)
     console.log(currentT.row, currentT.column)
   
     /* Down arrow */
   } else if (e.which === 40) {
-    if (posValid(currentT, 0)) {
+    if (posValid(0)) {
       currentT.row = currentT.row + 1
+    } else {
+      lockCurrentT()
     }
-    lockCurrentT()
     console.log(playBoard)
     console.log(currentT.row, currentT.column)
   
     /* Left arrow */
   } else if (e.which === 37) {
-    if (posValid(currentT, -1)) {
+    if (posValid(-1)) {
       currentT.column = currentT.column - 1
     }
-    lockCurrentT()
     console.log(playBoard)
     console.log(currentT.row, currentT.column)
   
     /* Right arrow */
   } else if (e.which === 39) {
-    if (posValid(currentT, 1)) {
+    if (posValid(1)) {
       currentT.column = currentT.column + 1
     }
-    lockCurrentT()
     console.log(playBoard)
     console.log(currentT.row, currentT.column)
   }
@@ -189,13 +181,13 @@ function rotateCurrentT() {
   currentT.Tarr = after
 }
 
-function posValid(array, side) {
-  for (let i = 0; i < array.Tarr.length; i++) {
-    for (let j = 0; j < array.Tarr[0].length; j++) {
-      if (array.Tarr[i][j] === 1) {
-        const row = array.row + i
-        const column = array.column + j + side
-        if (row >= playBoard.length || column < 0 || column >= playBoard[0].length) {
+function posValid(side) {
+  for (let i = 0; i < currentT.Tarr.length; i++) {
+    for (let j = 0; j < currentT.Tarr[0].length; j++) {
+      if (currentT.Tarr[i][j] === 1) {
+        const row = currentT.row + i
+        const column = currentT.column + j + side
+        if (row + 1 >= playBoard.length || column < 0 || column >= playBoard[0].length) {
           return false
         }
         if (playBoard[row][column] === 1) {
@@ -207,12 +199,12 @@ function posValid(array, side) {
   return true
 }
 
-function clearPlayBoard(array) {
-  for (let i = 0; i < array.Tarr.length; i++) {
-    for (let j = 0; j < array.Tarr[0].length; j++) {
-      if (array.Tarr[i][j] === 1) {
-        const row = array.row + i
-        const column = array.column + j
+function clearPlayBoard() {
+  for (let i = 0; i < currentT.Tarr.length; i++) {
+    for (let j = 0; j < currentT.Tarr[0].length; j++) {
+      if (currentT.Tarr[i][j] === 1) {
+        const row = currentT.row + i
+        const column = currentT.column + j
         if (!lockedT.some(t => t.row === row && t.column === column)) {
           playBoard[row][column] = 0
         }

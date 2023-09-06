@@ -1,52 +1,127 @@
+.body {
+  background-color: #850097;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+}
+
+h1 {
+  background-color:  ;
+  text-align: center;
+  font-size: 70px;
+  font-family: 'Iceland', cursive;
+}
+
 .box {
   display: flex;
+  justify-content: center;
+  background-color: lightgrey;
+}
+
+p {
+  font-family: 'Iceland', cursive;
+  font-size: 30px;
+}
+
+#instructions {
+  font-size: 15px;
+}
+
+button {
+  font-family: 'Iceland', cursive;
+  width: 100px;
+  margin: 15px 15px 15px 15px;
+  padding: 10px 10px;
+  font-size: 25px;
+  cursor: pointer;
+  text-align: center;
+  color: #fff;
+  background-color: #23a428;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+}
+
+.button:hover {background-color: #235e25}
+
+.button:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
 }
 
 .board {
+  background-color: rgba(240, 255, 255, 0.613);
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(20, 1fr);
-  border: 1px solid black;
-  width: 400px;
-  height: 800px;
+  border: 3px solid rgb(69, 69, 69);
+  width: 350px;
+  height: 700px;
+  margin-right: 40px;
+  margin-left: 40px;
+  border-radius: 8px;
 }
 
 .preview {
   display: grid;
+  background-color: rgba(240, 255, 255, 0.613);
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(4, 1fr);
-  border: 1px solid black;
+  border: 3px solid rgb(69, 69, 69);
+  border-radius: 8px;
   width: 150px;
   height: 150px;
 }
 
 .cell {
-  border: 1px solid black;
-  border-radius: 4px;
+  border: 1px solid rgb(81, 81, 81);
+  border-radius: 8px;
   border-width: 2px;
 }
 
 
 .I { 
+  background: url("../assets/cyan.png");
+  background-size: 35px;
   background-color: #95f4ff;
+  background-position: center;
 }
 .O {
+  background: url("../assets/yellow.png");
+  background-size: 35px;
   background-color: #ffff6f;
+  background-position: center;
 }
 .L  {
+  background: url("../assets/purple.png");
+  background-size: 35px;
   background-color: #850097;
+  background-position: center;
 }
 .J { 
+  background: url("../assets/green.png");
+  background-size: 35px;
   background-color: #24970d;
+  background-position: center;
 }
 .T {
+  background: url("../assets/red.png");
+  background-size: 35px;
   background-color: #df1600;
+  background-position: center;
 }
 .Z {
+  background: url("../assets/blue.png");
+  background-size: 35px;
   background-color: #4545ffdc;
+  background-position: center;
 }
 .S {
+  background: url("../assets/orange.png");
+  background-size: 35px;
   background-color: #ff6d0bcc;
+  background-position: center;
 }
 
 .leftColumn {

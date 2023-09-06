@@ -2,7 +2,7 @@ import tetrominos from './data.js'
 /*-------------------------------- Constants --------------------------------*/
 
 /*---------------------------- Variables (state) ----------------------------*/
-let currentT, nextT, bottomEdge
+let currentT, nextT
 let TSequence = []
 let playBoard = Array(20).fill().map(() => Array(10).fill(0))
 
@@ -14,31 +14,31 @@ const board = document.querySelector('.board')
 const preview = document.querySelector('.preview')
 
 /*----------------------------- Event Listeners -----------------------------*/
-// startBtn.addEventListener('click', render)
-// stopBtn.addEventListener('click', render)
+// startBtn.addEventListener('click', gameLoop)
+// stopBtn.addEventListener('click', gameOver)
 document.addEventListener('keydown', userInput)
 
 /*-------------------------------- Functions --------------------------------*/
-// function render() {
-//   // const playBoard = Array(22).fill(Array(10).fill(0))
-//   // const TSequence = []
-//   getCurrentAndNextT()
-//   spawnCurrentT(currentT)
-//   // displayNextT()
+// requestAnimationFrame(gameLoop)
+// function gameLoop() {
+  getCurrentAndNextT()
+  lockCurrentT()
+// }
 
-getCurrentAndNextT()
+// function gameOver() {
+//   cancelAnimationFrame(gameLoop)
+// }
 
-spawnCurrentT()
 
-function spawnCurrentT() {
+function lockCurrentT() {
+  displayCurrentT(currentT)
+  displayNextT(nextT)
   for (let i = 0; i < currentT.Tarr.length; i++) {
     for (let j = 0; j < currentT.Tarr[0].length; j++) {
-      
-      /* Game Over if Current T cannot move of board */
-      playBoard[currentT.row + i][currentT.column + j] = currentT.Tarr[i][j]
+      if (currentT.Tarr[i][j] === 1) {  
+        playBoard[currentT.row + i][currentT.column + j] = 1
+      }
     }
-    displayCurrentT(currentT)
-    displayNextT(nextT)
   }
 }
 
@@ -71,11 +71,14 @@ function generateNextT() {
   TSequence.push(randomT)
 }
 
-function clearPlayBoard(previousT) {
-  for (let i = 0; i < previousT.Tarr.length; i++) {
-    for (let j = 0; j < previousT.Tarr[0].length; j++) {
-      if (previousT.Tarr[i][j] === 1) {
-        playBoard[currentT.row + i][currentT.column + j] = 0
+function clearPlayBoard(array) {
+  for (let i = 0; i < array.Tarr.length; i++) {
+    for (let j = 0; j < array.Tarr[0].length; j++) {
+      if (array.Tarr[i][j] === 1) {
+        playBoard[array.row + i][array.column + j] = 0
+        if (array.row + i + 1 === playBoard.length) {
+          return
+        }
       }
     }
   }
@@ -84,63 +87,75 @@ function clearPlayBoard(previousT) {
   }
 }
 
-function rotatecurrentT() {
-  const after = currentT.Tarr.map((row, i) =>
-    row.map((column, j) => currentT.Tarr[currentT.Tarr.length - j - 1][i]))
-  currentT.Tarr = after
+function rotateCurrentT(array) {
+  const after = array.Tarr.map((row, i) =>
+    row.map((column, j) => array.Tarr[currentT.Tarr.length - j - 1][i]))
+  array.Tarr = after
 }
 
 function userInput(e) {
+  
   /* Up arrow */
   if (e.which === 38) {
     clearPlayBoard(currentT)
-    rotatecurrentT()
-    spawnCurrentT()
+    if (posValid(currentT, 0)) {
+      rotateCurrentT(currentT)
+    }
+    lockCurrentT()
     console.log(currentT.Tarr)
     console.log(playBoard)
     console.log(currentT.row, currentT.column)
-  /* Down arrow */
+  
+    /* Down arrow */
   } else if (e.which === 40) {
     clearPlayBoard(currentT)
-    if (!posInvalid(currentT)) {
+    if (posValid(currentT, 0)) {
       currentT.row = currentT.row + 1
-    } else {
-        currentT.row = currentT.row
     }
-    spawnCurrentT()
+    lockCurrentT()
     console.log(playBoard)
     console.log(currentT.row, currentT.column)
-  /* Left arrow */
+  
+    /* Left arrow */
   } else if (e.which === 37) {
     clearPlayBoard(currentT)
-    if (!posInvalid(currentT)) {
+    if (posValid(currentT, -1)) {
       currentT.column = currentT.column - 1
-    } else {
-      currentT.column = currentT.column
     }
-    spawnCurrentT()
+    lockCurrentT()
     console.log(playBoard)
     console.log(currentT.row, currentT.column)
-  /* Right arrow */
+  
+    /* Right arrow */
   } else if (e.which === 39) { 
     clearPlayBoard(currentT)
-    if (!posInvalid(currentT)) {
+    if (posValid(currentT, 1)) {
       currentT.column = currentT.column + 1
-    } else {
-      currentT.column = currentT.column
     }
-    spawnCurrentT()
+    lockCurrentT()
     console.log(playBoard)
     console.log(currentT.row, currentT.column)
   }
 }
 
-function posInvalid(array) {
-  const isInvalidRow =  array.row + array.Tarr.length > playBoard.length
-  const isInvalidColumn = array.column <= 0 || array.column + array.Tarr[0].length >= playBoard[0].length
-  return isInvalidRow || isInvalidColumn
-}
 
+function posValid(array, side) {
+  for (let i = 0; i < array.Tarr.length; i++) {
+    for (let j = 0; j < array.Tarr[0].length; j++) {
+      if (array.Tarr[i][j] === 1) {
+        const row = array.row + i
+        const column = array.column + j + side
+        if (row >= playBoard.length || column < 0 || column >= playBoard[0].length) {
+          return false
+        }
+        if (playBoard[row][column] === 1) {
+          return false
+        }
+      }
+    }
+  }
+  return true
+}
 
 function displayCurrentT(array) {
   for (let i = 0; i < array.Tarr.length; i++) {

@@ -30,6 +30,7 @@ function init() {
 function render() {
   displayCurrentT()
   displayNextT()
+  displayLockedT()
 }
 
 function displayCurrentT() {
@@ -79,6 +80,18 @@ function displayLockedT() {
   })
 }
 
+function dropTAnimation() {
+  if (posValid(0)) {
+    currentT.row = currentT.row + 1
+    requestAnimationFrame()
+  } else {
+    clearFullRows()
+    displayLockedT()
+    currentT = nextT
+    nextT = getNextT()
+  }
+}
+
 function getNextT() {
   /* at start of game */
   if (TSequence.length === 0) {
@@ -110,34 +123,46 @@ function generateRandomT() {
 
 /* lock the current T position into playBoard */
 function lockCurrentT() {
-  for (let i = 0; i < currentT.Tarr.length; i++) {
-    for (let j = 0; j < currentT.Tarr[0].length; j++) {
-      if (currentT.Tarr[i][j] === 1) {
-        playBoard[currentT.row + i][currentT.column + j] = 1
+  if (!posValid(0)) { 
+    const row = currentT.row
+    const column = currentT.column
+    const name = currentT.name
+    const Tarr = currentT.Tarr
+    for (let i = 0; i < currentT.Tarr.length; i++) {
+      for (let j = 0; j < currentT.Tarr[0].length; j++) {
+        if (currentT.Tarr[i][j] === 1) {
+          playBoard[currentT.row + i][currentT.column + j] = 1
+          console.log(playBoard)
+          console.log(`Row: ${currentT.row}, Column: ${currentT.column}`)
+        }
       }
     }
-  }
   /* add current T to locked T array */
-  const row = currentT.row
-  const column = currentT.column
-  const name = currentT.name
-  const Tarr = currentT.Tarr
-  lockedT.push({name, row, column, Tarr})
-  displayLockedT()
-  clearFullRows()
+    lockedT.push({name, row, column, Tarr})
+  }
 }
   
 function clearFullRows() {
   let completedRows = []
+  /* check for completed rows - all 1s */
   for (let row = playBoard.length - 1; row >=0; row--) {
-    if (playBoard[row].every(cell => cell === 1)) {
-      completedRows.push(row)
+    if (playBoard[row].every( column => column === 1)) {
+      console.log(`row ${row} is completed`)
+      completedRows.push(`${row}`)
+      console.log('completed rows:', completedRows)
+      for (let ro = row; ro > 0; ro--) {
+        for (let col = 0; col < playBoard[ro].length; col++) {
+          /* shift the rows above down */  
+          playBoard[ro][col] = playBoard[ro - 1][col]
+        }
+      }
     }
   }
-  for (let row of completedRows) {
-    playBoard.splice(row, 1)
-    playBoard.unshift(Array(10).fill(0))
-  } 
+//   completedRows.forEach(row => {
+//     LockedCellstoRemove = board.querySelectorAll(`.cell locked ${row}`)
+//     console.log(LockedCellstoRemove)
+//     LockedCellstoRemove.forEach(cell => board.removeChild(cell))
+//   })
 }
 
 /* Listen to keyboard events */
@@ -148,8 +173,6 @@ function userInput(e) {
     if (posValid(0)) {
       rotateCurrentT(currentT)
     }
-    console.log(playBoard)
-    console.log(currentT.row, currentT.column)
   
     /* Down arrow */
   } else if (e.which === 40) {
@@ -160,26 +183,43 @@ function userInput(e) {
       currentT = nextT
       nextT = getNextT()
     }
-    console.log(playBoard)
-    console.log(currentT.row, currentT.column)
-  
+
     /* Left arrow */
   } else if (e.which === 37) {
     if (posValid(-1)) {
       currentT.column = currentT.column - 1
     }
-    console.log(playBoard)
-    console.log(currentT.row, currentT.column)
-  
+
     /* Right arrow */
   } else if (e.which === 39) {
     if (posValid(1)) {
       currentT.column = currentT.column + 1
     }
-    console.log(playBoard)
-    console.log(currentT.row, currentT.column)
   }
   render()
+    /* Space bar */
+  if (e.which === 32) {
+    let lastRow = - 1
+    for (let row = playBoard.length - 1; row >= 0; row--) {
+      if (playBoard[row][currentT.column] === 0) {
+        lastRow = row
+        break
+      }
+    }
+    while (currentT.row <= lastRow - currentT.Tarr.length) {
+      if (posValid(0)) {
+        console.log('okay!')
+        currentT.row = currentT.row + 1
+      } else {
+        console.log('not okay')
+        // lockCurrentT()
+        // currentT = nextT
+        // nextT = getNextT()
+        // render()
+      }
+    }
+    console.log('last row is', lastRow)
+  }
 }
 
 function rotateCurrentT() {

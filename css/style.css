@@ -1,21 +1,18 @@
-.body {
-  background-color: #850097;
-  display: flex;
-  justify-content: center;
-  align-content: center;
-}
-
 h1 {
-  background-color:  ;
   text-align: center;
-  font-size: 70px;
+  font-size: 80px;
   font-family: 'Iceland', cursive;
+  background-size: 20%;
+  background-image: url('../assets/animals.png');
+  text-shadow: 3px 3px rgb(165, 165, 165);
+  color: rgb(31, 57, 57);
 }
 
 .box {
+  background-color: lightgray;
   display: flex;
   justify-content: center;
-  background-color: lightgrey;
+  color: rgb(30, 54, 54);
 }
 
 p {
@@ -35,8 +32,8 @@ button {
   font-size: 25px;
   cursor: pointer;
   text-align: center;
-  color: #fff;
-  background-color: #23a428;
+  color: hsl(0, 0%, 100%);
+  background-color: #50a754;
   border: none;
   border-radius: 15px;
   box-shadow: 0 9px #999;
@@ -55,7 +52,7 @@ button {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(20, 1fr);
-  border: 3px solid rgb(69, 69, 69);
+  border: 2px solid rgb(69, 69, 69);
   width: 350px;
   height: 700px;
   margin-right: 40px;
@@ -68,7 +65,7 @@ button {
   background-color: rgba(240, 255, 255, 0.613);
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(4, 1fr);
-  border: 3px solid rgb(69, 69, 69);
+  border: 2px solid rgb(69, 69, 69);
   border-radius: 8px;
   width: 150px;
   height: 150px;
@@ -80,6 +77,15 @@ button {
   border-width: 2px;
 }
 
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+} 
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+}
 
 .I { 
   background: url("../assets/cyan.png");
@@ -124,13 +130,4 @@ button {
   background-position: center;
 }
 
-.leftColumn {
-  display: flex;
-  flex-direction: column;
-} 
-
-.rightColumn {
-  display: flex;
-  flex-direction: column;
-}
 

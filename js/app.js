@@ -2,7 +2,7 @@ import tetrominos from './data.js'
 /*-------------------------------- Constants --------------------------------*/
 
 /*---------------------------- Variables (state) ----------------------------*/
-let currentT, nextT, playBoard
+let currentT, nextT, playBoard, timer
 let TSequence = []
 let lockedT = [] /* contains the locked T on playBoard */
 
@@ -15,17 +15,13 @@ const preview = document.querySelector('.preview')
 
 /*----------------------------- Event Listeners -----------------------------*/
 document.addEventListener('DOMContentLoaded', init)
-startBtn.addEventListener('click', init)
+startBtn.addEventListener('click', startGame)
 // stopBtn.addEventListener('click', gameOver)
 document.addEventListener('keydown', userInput)
 
 /*-------------------------------- Functions --------------------------------*/
 function init() {
   playBoard = Array(20).fill().map(() => Array(10).fill(0))
-  currentT = getNextT()
-  nextT = getNextT()
-  dropTAnimation()
-  render()
 }
 
 function render() {
@@ -34,16 +30,25 @@ function render() {
   displayLockedT()
 }
 
-function dropTAnimation() {
-  if (posValid(0)) {
-    currentT.row = currentT.row + 1
-    requestAnimationFrame()
+function startGame() {
+  if (timer) {
+    clearInterval(timer)
+    timer = null
   } else {
-    clearFullRows()
-    currentT = nextT
+    console.log('clicked!')
+    currentT = getNextT()
     nextT = getNextT()
+    render()
+    timer = setInterval(dropTAnimation, 1000)
   }
 }
+
+function dropTAnimation() {
+    clearPlayBoard()
+    currentT.row = currentT.row + 1
+    lockCurrentT()
+    render()
+  }
 
 function displayCurrentT() {
   for (let i = 0; i < currentT.Tarr.length; i++) {
@@ -137,8 +142,13 @@ function lockCurrentT() {
         }
       }
     }
-  /* add current T to locked T array */
+    /* add current T to locked T array */
     lockedT.push({name, row, column, Tarr})
+    /* clear out full rows */
+    clearFullRows()
+    /* get new T */
+    currentT = nextT
+    nextT = getNextT()
   }
 }
   
@@ -180,8 +190,6 @@ function userInput(e) {
       currentT.row = currentT.row + 1
     } else {
       lockCurrentT()
-      currentT = nextT
-      nextT = getNextT()
     }
 
     /* Left arrow */

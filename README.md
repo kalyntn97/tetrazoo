@@ -7,7 +7,7 @@ Welcome to ***Tetris***, where the classic tile-matching puzzle meets adorable c
 
 * **Cute Animal Theme**: Play Tetris with a heartwarming twist! Admire the cute animal-themed blocks and backgrounds as you stack and clear lines.
 
-* **Intuitive Controls**: Use arrow keys to move and rotate the blocks. Press the down arrow key to make the blocks fall faster, or use the spacebar to instantly drop them.
+* **Intuitive Controls**: Use arrow keys to move and rotate the blocks. Press the down arrow key to make the blocks fall faster, or use the space bar to instantly drop them.
 
 * **Score and Levels**: Track your score as you progress through levels. The game speeds up as you advance, adding to the excitement.
 
@@ -15,7 +15,7 @@ Welcome to ***Tetris***, where the classic tile-matching puzzle meets adorable c
 
 ### How to Play
 
-1. Start the Game: Open the [index.html](./index.html) file in your web browser or visit our online [demo](https://tetris-kalyn.netlify.app/).
+1. Start the Game: Open the [index.html](./index.html) file in your web browser or visit my online [demo](https://tetris-kalyn.netlify.app/).
 
 2. Controls:
 
@@ -45,15 +45,14 @@ Contributions are welcome! If you'd like to improve the game, add more cute anim
 ### License
 This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
 
-### Acknowledgments
+### Attributions
 Special thanks to the creators of Tetris for the inspiration.
-
 [Link to Tetris Guidelines](https://tetris.fandom.com/wiki/Tetris_Guideline)
 
 ### Next Steps
 
 
 ### Contact
-If you have any questions, suggestions, or just want to share your love for cute animals, feel free to contact us at tranhnnguyen13@gmail.com.
+If you have any questions, suggestions, or just want to share your love for cute animals, feel free to contact me at tranhnnguyen13@gmail.com.
 
 Enjoy playing Tetris!

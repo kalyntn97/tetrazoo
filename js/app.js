@@ -15,7 +15,7 @@ const preview = document.querySelector('.preview')
 
 /*----------------------------- Event Listeners -----------------------------*/
 document.addEventListener('DOMContentLoaded', init)
-// startBtn.addEventListener('click', init)
+startBtn.addEventListener('click', init)
 // stopBtn.addEventListener('click', gameOver)
 document.addEventListener('keydown', userInput)
 
@@ -24,6 +24,7 @@ function init() {
   playBoard = Array(20).fill().map(() => Array(10).fill(0))
   currentT = getNextT()
   nextT = getNextT()
+  dropTAnimation()
   render()
 }
 
@@ -31,6 +32,17 @@ function render() {
   displayCurrentT()
   displayNextT()
   displayLockedT()
+}
+
+function dropTAnimation() {
+  if (posValid(0)) {
+    currentT.row = currentT.row + 1
+    requestAnimationFrame()
+  } else {
+    clearFullRows()
+    currentT = nextT
+    nextT = getNextT()
+  }
 }
 
 function displayCurrentT() {
@@ -78,18 +90,6 @@ function displayLockedT() {
       }  
     }
   })
-}
-
-function dropTAnimation() {
-  if (posValid(0)) {
-    currentT.row = currentT.row + 1
-    requestAnimationFrame()
-  } else {
-    clearFullRows()
-    displayLockedT()
-    currentT = nextT
-    nextT = getNextT()
-  }
 }
 
 function getNextT() {

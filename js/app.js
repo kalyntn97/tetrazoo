@@ -2,10 +2,10 @@ import tetrominos from './data.js'
 /*-------------------------------- Constants --------------------------------*/
 
 /*---------------------------- Variables (state) ----------------------------*/
-let currentT, nextT
+let currentT, nextT, playBoard
 let TSequence = []
-let playBoard 
-let lockedT = []
+let lockedT = [] /* contains the locked T on playBoard */
+
 
 /*------------------------ Cached Element References ------------------------*/
 const startBtn = document.getElementById('startBtn')
@@ -15,7 +15,7 @@ const preview = document.querySelector('.preview')
 
 /*----------------------------- Event Listeners -----------------------------*/
 document.addEventListener('DOMContentLoaded', init)
-startBtn.addEventListener('click', init)
+// startBtn.addEventListener('click', init)
 // stopBtn.addEventListener('click', gameOver)
 document.addEventListener('keydown', userInput)
 
@@ -64,16 +64,23 @@ function displayNextT() {
 }
 
 function displayLockedT() {
-  for (const t of lockedT) {
-    const cell = document.createElement('div')
-    cell.classList.add('cell', 'locked', `${t.name}`)
-    cell.style.gridRow = t.row + tetrominos[t.name].length
-    cell.style.gridColumn = t.column + tetrominos[t.name][0].length
-    board.appendChild(cell)
-  }
+  lockedT.forEach(t => {
+    for (let i = 0; i < t.Tarr.length; i++) {
+      for (let j = 0; j < t.Tarr[0].length; j++) {
+        if (t.Tarr[i][j] === 1) {
+          const cell = document.createElement('div')
+          cell.classList.add('cell', 'locked', `${t.name}`)
+          cell.style.gridRow = t.row + i + 1
+          cell.style.gridColumn = t.column + j + 1
+          board.appendChild(cell)
+        }
+      }  
+    }
+  })
 }
 
 function getNextT() {
+  /* at start of game */
   if (TSequence.length === 0) {
     generateRandomT()
     generateRandomT()
@@ -101,8 +108,8 @@ function generateRandomT() {
   TSequence.push(randomT)
 }
 
+/* lock the current T position into playBoard */
 function lockCurrentT() {
-  clearPlayBoard()
   for (let i = 0; i < currentT.Tarr.length; i++) {
     for (let j = 0; j < currentT.Tarr[0].length; j++) {
       if (currentT.Tarr[i][j] === 1) {
@@ -110,16 +117,14 @@ function lockCurrentT() {
       }
     }
   }
+  /* add current T to locked T array */
   const row = currentT.row
   const column = currentT.column
   const name = currentT.name
-  lockedT.push({name, row, column})
-  console.log(lockedT)
+  const Tarr = currentT.Tarr
+  lockedT.push({name, row, column, Tarr})
   displayLockedT()
   clearFullRows()
-  clearPlayBoard()
-  currentT = nextT
-  render()
 }
   
 function clearFullRows() {
@@ -129,7 +134,7 @@ function clearFullRows() {
       completedRows.push(row)
     }
   }
-  for (const row of completedRows) {
+  for (let row of completedRows) {
     playBoard.splice(row, 1)
     playBoard.unshift(Array(10).fill(0))
   } 
@@ -152,6 +157,8 @@ function userInput(e) {
       currentT.row = currentT.row + 1
     } else {
       lockCurrentT()
+      currentT = nextT
+      nextT = getNextT()
     }
     console.log(playBoard)
     console.log(currentT.row, currentT.column)
@@ -187,9 +194,11 @@ function posValid(side) {
       if (currentT.Tarr[i][j] === 1) {
         const row = currentT.row + i
         const column = currentT.column + j + side
+        /* check if current T is out of playBoard */
         if (row + 1 >= playBoard.length || column < 0 || column >= playBoard[0].length) {
           return false
         }
+        /* check if current T collides with an existing T on playBoard */
         if (playBoard[row][column] === 1) {
           return false
         }
@@ -205,15 +214,16 @@ function clearPlayBoard() {
       if (currentT.Tarr[i][j] === 1) {
         const row = currentT.row + i
         const column = currentT.column + j
+        /* clear playBoard value of all cells except for locked Ts */
         if (!lockedT.some(t => t.row === row && t.column === column)) {
           playBoard[row][column] = 0
         }
       }
     }
   }
-  while (board.lastChild) {
-    board.removeChild(board.lastChild)
-  }
+  /* clear non-locked cells off the visual playBoard */
+  const nonLockedCells = board.querySelectorAll('.cell:not(.locked)')
+  nonLockedCells.forEach(cell => board.removeChild(cell))
 }
 
 

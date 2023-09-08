@@ -31,8 +31,7 @@ Welcome to ***Tetris***, where the classic tile-matching puzzle meets adorable c
 5. Levels: The game becomes faster and more challenging as you advance through levels. Can you reach the highest level?
 
 ### Demo
-You can play a live demo of the game [here](https://tetris-kalyn.netlify.app/).
-
+You can play a live demo of the game [here](https://tetris-kalyn.netlify.app/)
 ### Screenshots
 ![image](https://github.com/kalyntn97/meow-tris/assets/142560721/3c830e9d-6933-46c5-a9c8-efa538653fb7)
 

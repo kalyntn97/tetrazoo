@@ -34,7 +34,8 @@ Welcome to ***Tetris***, where the classic tile-matching puzzle meets adorable c
 You can play a live demo of the game [here](https://tetris-kalyn.netlify.app/).
 
 ### Screenshots
-![Screenshot of gameplay](./assets/screenshot1.png)
+![image](https://github.com/kalyntn97/meow-tris/assets/142560721/3c830e9d-6933-46c5-a9c8-efa538653fb7)
+
 
 ### Technologies Used
 * HTML, CSS, JavaScript

@@ -1,6 +1,8 @@
 import tetrominos from './data.js'
 import gameRounds from './game.js'
 /*-------------------------------- Constants --------------------------------*/
+const successSound = new Audio ('../assets/audio/success.wav')
+const stickSound = new Audio ('../assets/audio/stick.wav')
 
 /*---------------------------- Variables (state) ----------------------------*/
 let currentT, nextT, playBoard, timer, TSequence, lockedT, score, lastRow, level, gameOver, speed
@@ -25,7 +27,7 @@ document.addEventListener('keydown', userInput)
 function init() {
   playBoard = Array(20).fill().map(() => Array(10).fill(0))
   TSequence = []
-  currentT = 0
+  currentT = []
   nextT = getNextT()
   lockedT = []
   lastRow = -1
@@ -90,7 +92,6 @@ function startGame() {
     clearInterval(timer)
     timer = null
   } else {
-    render()
     /* check for game over */
     for (let column = 0; column < playBoard[0].length; column++) {
       if (playBoard[currentT.row + currentT.Tarr.length][column] === 1) {
@@ -100,13 +101,16 @@ function startGame() {
         timer = null
       }
     }
+    /* check if start of game */
     if (level === 1) {
       timer = setInterval(dropTAnimation, 1000)
     } else {
       checkLevelUp()
     }
-  }
+  } 
 }
+
+
 
 /* check if player meets level up conditions */
 function checkLevelUp() { 
@@ -227,6 +231,9 @@ function lockCurrentT() {
         }
       }
     }
+    /* play sound when a T is locked */
+    stickSound.volume = 0.5
+    stickSound.play()
     /* add current T to locked T array */
     lockedT.push({name, row, column, Tarr})
     /* clear out full rows */ 
@@ -258,6 +265,9 @@ function clearFullRows() {
     for (let column = 0; column < playBoard[row].length; column++) {
       if (firstFilledRow - next > 0) {
         playBoard[firstFilledRow - next][column] = playBoard[row][column]
+        /* play sound if a line is cleared */
+        successSound.volume = 0.5
+        successSound.play()
       }
     }
     next++

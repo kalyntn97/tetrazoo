@@ -49,8 +49,10 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 Special thanks to the creators of Tetris for the inspiration.
 [Link to Tetris Guidelines](https://tetris.fandom.com/wiki/Tetris_Guideline)
 [Cute Animals Vectors by Vecteezy](https://www.vecteezy.com/free-vector/cute-animals)
+[Free sound clips](https://freesound.org/)
 
 ### Next Steps
+Add function to level up and track score for a more challenging game play
 
 
 ### Contact

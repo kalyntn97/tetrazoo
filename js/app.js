@@ -93,7 +93,8 @@ function startGame() {
       if (playBoard[currentT.row + currentT.Tarr.length][column] === 1) {
         gameOver = true
         showGameOverScreen()
-        reset()
+        clearInterval(timer)
+        timer = null
       }
     }
     timer = setInterval(dropTAnimation, 1000)

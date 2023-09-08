@@ -1,3 +1,7 @@
+.hidden {
+  display: none;
+
+}
 h1 {
   text-align: center;
   font-size: 80px;
@@ -7,6 +11,14 @@ h1 {
   background-color: aliceblue;
   text-shadow: 3px 3px rgb(165, 165, 165);
   color: rgb(31, 57, 57);
+}
+
+#gameOver h2 {
+  animation: GameOver 1s ease 0s 1 normal forwards;
+  text-align: center;
+  font-size: 70px;
+  font-family: 'Iceland', cursive;
+  color: #cefaffe2;
 }
 
 .box {
@@ -48,9 +60,8 @@ button {
   transform: translateY(4px);
 }
 
-
-
 .board {
+  position: relative;
   background-color: rgba(240, 255, 255, 0.613);
   display: grid;
   grid-template-columns: repeat(10, 1fr);
@@ -90,6 +101,28 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+#gameOver {
+  visibility: hidden;
+  position: absolute;
+  background-color: rgba(0, 48, 53, 0.65);
+  display: flex;
+  margin-left: 12px;
+  width: 350px;
+  height: 700px;
+  font-size: 50px;
+  text-align: center;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  display: flex;
+  z-index: 100;
+}
+
+#gameStart a:hover, #gameOver a:hover {
+  background-color: #87a182;
 }
 
 .I { 
@@ -135,4 +168,15 @@ button {
   background-position: center;
 }
 
+@keyframes GameOver {
+	0% {
+		animation-timing-function: ease-out;
+		transform: scale(1);
+		transform-origin: center center;
+	}
+
+	10% {
+		animation-timing-function: ease-in;
+		transform: scale(0.91);
+	}
 

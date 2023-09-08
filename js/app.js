@@ -91,10 +91,9 @@ function startGame() {
     /* check for game over */
     for (let column = 0; column < playBoard[0].length; column++) {
       if (playBoard[currentT.row + currentT.Tarr.length][column] === 1) {
-        clearInterval(timer)
-        timer = null
         gameOver = true
         showGameOverScreen()
+        reset()
       }
     }
     timer = setInterval(dropTAnimation, 1000)

@@ -4,6 +4,7 @@ h1 {
   font-family: 'Iceland', cursive;
   background-size: 20%;
   background-image: url('../assets/animals.png');
+  background-color: aliceblue;
   text-shadow: 3px 3px rgb(165, 165, 165);
   color: rgb(31, 57, 57);
 }
@@ -21,7 +22,7 @@ p {
 }
 
 #instructions {
-  font-size: 15px;
+  font-size: 20px;
 }
 
 button {
@@ -33,19 +34,21 @@ button {
   cursor: pointer;
   text-align: center;
   color: hsl(0, 0%, 100%);
-  background-color: #50a754;
+  background-color: #18771d;
   border: none;
   border-radius: 15px;
   box-shadow: 0 9px #999;
 }
 
-.button:hover {background-color: #235e25}
+.button:hover {background-color: #4d9c4f}
 
 .button:active {
   background-color: #3e8e41;
   box-shadow: 0 5px #666;
   transform: translateY(4px);
 }
+
+
 
 .board {
   background-color: rgba(240, 255, 255, 0.613);
@@ -69,6 +72,7 @@ button {
   border-radius: 8px;
   width: 150px;
   height: 150px;
+  margin-bottom: 60px;
 }
 
 .cell {
@@ -85,6 +89,7 @@ button {
 .rightColumn {
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 .I { 

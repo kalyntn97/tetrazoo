@@ -48,6 +48,7 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 ### Attributions
 Special thanks to the creators of Tetris for the inspiration.
 [Link to Tetris Guidelines](https://tetris.fandom.com/wiki/Tetris_Guideline)
+[Cute Animals Vectors by Vecteezy](https://www.vecteezy.com/free-vector/cute-animals)
 
 ### Next Steps
 

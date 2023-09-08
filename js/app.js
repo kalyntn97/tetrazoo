@@ -1,8 +1,9 @@
 import tetrominos from './data.js'
+import gameRounds from './game.js'
 /*-------------------------------- Constants --------------------------------*/
 
 /*---------------------------- Variables (state) ----------------------------*/
-let currentT, nextT, playBoard, timer, TSequence, lockedT, score, lastRow, level, gameOver
+let currentT, nextT, playBoard, timer, TSequence, lockedT, score, lastRow, level, gameOver, speed
 
 
 /*------------------------ Cached Element References ------------------------*/
@@ -29,6 +30,8 @@ function init() {
   lockedT = []
   lastRow = -1
   score = 0
+  level = 1
+  speed = 1000
   gameOver = false
   scoreEl.innerHTML = score
   levelEl.innerHTML = 1
@@ -97,9 +100,29 @@ function startGame() {
         timer = null
       }
     }
-    timer = setInterval(dropTAnimation, 1000)
+    if (level === 1) {
+      timer = setInterval(dropTAnimation, 1000)
+    } else {
+      checkLevelUp()
+    }
   }
 }
+
+/* check if player meets level up conditions */
+function checkLevelUp() { 
+  let score = +scoreEl.innerHTML
+  for (let i = 0; i < gameRounds.length; i++) {
+    if (score === gameRounds[i].score) {
+      level = gameRounds[i].level
+      speed = gameRounds[i].speed
+      console.log(level, speed)
+      levelEl.innerHTML = level
+      timer = setInterval(dropTAnimation, speed)
+      return
+    } 
+  } 
+}
+
 
 function showGameOverScreen() {
   const gameOverScreen = document.getElementById('gameOver')
@@ -247,6 +270,7 @@ function clearFullRows() {
   // /* get the score for each cleared row */
   score = score + filledRows * 10
   scoreEl.innerHTML = score
+  checkLevelUp()
   
   /* remove filled rows from the game board */
   for (let row = firstFilledRow; row >= lastFilledRow; row--) {

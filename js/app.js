@@ -3,7 +3,6 @@ import gameRounds from './game.js'
 /*-------------------------------- Constants --------------------------------*/
 const successSound = new Audio ('../assets/audio/success.wav')
 const stickSound = new Audio ('../assets/audio/stick.wav')
-const lockedCellSize = '35px'
 
 /*---------------------------- Variables (state) ----------------------------*/
 let currentT, nextT, playBoard, timer, TSequence, lockedT, score, lastRow, level, gameOver, speed

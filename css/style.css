@@ -1,13 +1,10 @@
-.hidden {
-  display: none;
 
-}
 h1 {
   text-align: center;
   font-size: 80px;
   font-family: 'Iceland', cursive;
   background-size: 20%;
-  background-image: url('../assets/animals.png');
+  background-image: url('../assets/images/animals.png');
   background-color: aliceblue;
   text-shadow: 3px 3px rgb(165, 165, 165);
   color: rgb(31, 57, 57);
@@ -61,7 +58,7 @@ button {
 }
 
 .board {
-  position: relative;
+  display: relative;
   background-color: rgba(240, 255, 255, 0.613);
   display: grid;
   grid-template-columns: repeat(10, 1fr);
@@ -90,6 +87,7 @@ button {
   border: 1px solid rgb(81, 81, 81);
   border-radius: 8px;
   border-width: 2px;
+  z-index: 100;
 }
 
 .leftColumn {
@@ -126,43 +124,43 @@ button {
 }
 
 .I { 
-  background: url("../assets/cyan.png");
+  background: url("../assets/images/cyan.png");
   background-size: 35px;
   background-color: #95f4ff;
   background-position: center;
 }
 .O {
-  background: url("../assets/yellow.png");
+  background: url("../assets/images/yellow.png");
   background-size: 35px;
   background-color: #ffff6f;
   background-position: center;
 }
 .L  {
-  background: url("../assets/purple.png");
+  background: url("../assets/images/purple.png");
   background-size: 35px;
   background-color: #850097;
   background-position: center;
 }
 .J { 
-  background: url("../assets/green.png");
+  background: url("../assets/images/green.png");
   background-size: 35px;
   background-color: #24970d;
   background-position: center;
 }
 .T {
-  background: url("../assets/red.png");
+  background: url("../assets/images/red.png");
   background-size: 35px;
   background-color: #df1600;
   background-position: center;
 }
 .Z {
-  background: url("../assets/blue.png");
+  background: url("../assets/images/blue.png");
   background-size: 35px;
   background-color: #4545ffdc;
   background-position: center;
 }
 .S {
-  background: url("../assets/orange.png");
+  background: url("../assets/images/orange.png");
   background-size: 35px;
   background-color: #ff6d0bcc;
   background-position: center;
@@ -179,4 +177,3 @@ button {
 		animation-timing-function: ease-in;
 		transform: scale(0.91);
 	}
-

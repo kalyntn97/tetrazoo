@@ -1,8 +1,12 @@
 import tetrominos from './data.js'
+import gameRounds from './game.js'
 /*-------------------------------- Constants --------------------------------*/
+const successSound = new Audio ('../assets/audio/success.wav')
+const stickSound = new Audio ('../assets/audio/stick.wav')
+const lockedCellSize = '35px'
 
 /*---------------------------- Variables (state) ----------------------------*/
-let currentT, nextT, playBoard, timer, TSequence, lockedT, score, lastRow, level, gameOver
+let currentT, nextT, playBoard, timer, TSequence, lockedT, score, lastRow, level, gameOver, speed
 
 
 /*------------------------ Cached Element References ------------------------*/
@@ -29,6 +33,9 @@ function init() {
   lockedT = []
   lastRow = -1
   score = 0
+  level = 1
+  speed = 1000
+  timer = null
   gameOver = false
   scoreEl.innerHTML = score
   levelEl.innerHTML = 1
@@ -57,10 +64,6 @@ function reset() {
 }
 
 function render() {
-  if (currentT === 0) {
-    currentT = nextT
-    nextT = getNextT()
-  }
   displayCurrentT()
   displayNextT()
   displayLockedT()
@@ -86,18 +89,30 @@ function startGame() {
   if (timer) {
     clearInterval(timer)
     timer = null
-  } else {
+  }
+    /* check if start of game */
+  if (currentT === 0) {
+    currentT = nextT
+    nextT = getNextT()
     render()
-    /* check for game over */
-    for (let column = 0; column < playBoard[0].length; column++) {
-      if (playBoard[currentT.row + currentT.Tarr.length][column] === 1) {
-        gameOver = true
-        showGameOverScreen()
-        clearInterval(timer)
-        timer = null
-      }
-    }
     timer = setInterval(dropTAnimation, 1000)
+  } else {
+      checkLevelUp()
+    }
+}
+
+/* check if player meets level up conditions */
+function checkLevelUp() { 
+  let score = +scoreEl.innerHTML
+  for (let i = 0; i < gameRounds.length; i++) {
+    if (score === gameRounds[i].score) {
+      level = gameRounds[i].level
+      speed = gameRounds[i].speed
+      levelEl.innerHTML = level
+      clearInterval(timer)
+      timer = setInterval(dropTAnimation, speed)  
+      return
+    }
   }
 }
 
@@ -144,23 +159,34 @@ function displayNextT() {
     }
   }
 }
-
+/* testing - creating many divs */
 function displayLockedT() {
-  lockedT.forEach(t => {
-    for (let i = 0; i < t.Tarr.length; i++) {
-      for (let j = 0; j < t.Tarr[0].length; j++) {
-        if (t.Tarr[i][j] === 1) {
-          const cell = document.createElement('div')
-          cell.classList.add('cell', 'locked', `${t.name}`)
-          cell.dataset.row = t.row + i /* position in board */
-          cell.dataset.column = t.column + j /* position in board */
-          cell.style.gridRow = t.row + i + 1
-          cell.style.gridColumn = t.column + j + 1 
-          board.appendChild(cell)
-        }
-      }  
+  /* check for game over */
+  if (currentT.row === 0) {
+    if (playBoard[currentT.Tarr.length][currentT.column] === 1) {
+      clearInterval(timer)
+      timer = null
+      gameOver = true
+      showGameOverScreen()
     }
-  })
+  }
+  if (gameOver != true) {
+    lockedT.forEach(t => {
+      for (let i = 0; i < t.Tarr.length; i++) {
+        for (let j = 0; j < t.Tarr[0].length; j++) {
+          if (t.Tarr[i][j] === 1) {
+            const cell = document.createElement('div')
+            cell.classList.add('cell', 'locked', `${t.name}`)
+            cell.dataset.row = t.row + i /* position in board */
+            cell.dataset.column = t.column + j /* position in board */
+            cell.style.gridRow = t.row + i + 1
+            cell.style.gridColumn = t.column + j + 1 
+            board.appendChild(cell)
+          }
+        }  
+      }
+    })
+  }
 }
 
 /* get the next T in sequence */
@@ -192,6 +218,7 @@ function generateRandomT() {
 
 /* lock the current T position into playBoard */
 function lockCurrentT() {
+  /* check if cell ready to be locked to game board */
   if (!posValid(0)) { 
     const row = currentT.row
     const column = currentT.column
@@ -204,6 +231,9 @@ function lockCurrentT() {
         }
       }
     }
+    /* play sound when a T is locked */
+    stickSound.volume = 0.1
+    stickSound.play()
     /* add current T to locked T array */
     lockedT.push({name, row, column, Tarr})
     /* clear out full rows */ 
@@ -235,6 +265,9 @@ function clearFullRows() {
     for (let column = 0; column < playBoard[row].length; column++) {
       if (firstFilledRow - next > 0) {
         playBoard[firstFilledRow - next][column] = playBoard[row][column]
+        /* play sound if a line is cleared */
+        successSound.volume = 0.1
+        successSound.play()
       }
     }
     next++
@@ -247,6 +280,7 @@ function clearFullRows() {
   // /* get the score for each cleared row */
   score = score + filledRows * 10
   scoreEl.innerHTML = score
+  checkLevelUp()
   
   /* remove filled rows from the game board */
   for (let row = firstFilledRow; row >= lastFilledRow; row--) {
@@ -264,8 +298,6 @@ function clearFullRows() {
     })
   }
 }
-
-
 
 /* Listen to keyboard events */
 function userInput(e) {
@@ -362,5 +394,3 @@ function clearGameBoard() {
   const nonLockedCells = board.querySelectorAll('.cell:not(.locked)')
   nonLockedCells.forEach(cell => board.removeChild(cell))
 }
-
-

@@ -1,11 +1,16 @@
 import tetrominos from './data.js'
 import gameRounds from './game.js'
+
+
 /*-------------------------------- Constants --------------------------------*/
 const successSound = new Audio ('../assets/audio/success.wav')
 const stickSound = new Audio ('../assets/audio/stick.wav')
+const gameOverSound = new Audio ('../assets/audio/sadMeow.wav')
+const clickSound = new Audio ('../assets/audio/click.mp3')
+
 
 /*---------------------------- Variables (state) ----------------------------*/
-let currentT, nextT, playBoard, timer, TSequence, lockedT, score, lastRow, level, gameOver, speed
+let playBoard, TSequence, currentT, nextT, timer, score, level, speed, gameOver
 
 
 /*------------------------ Cached Element References ------------------------*/
@@ -15,6 +20,7 @@ const preview = document.querySelector('.preview')
 const scoreEl = document.getElementById('score')
 const levelEl = document.getElementById('level')
 
+
 /*----------------------------- Event Listeners -----------------------------*/
 document.addEventListener('DOMContentLoaded', init)
 buttons.forEach(button => button.addEventListener('click', gameControls))
@@ -23,45 +29,57 @@ document.addEventListener('keydown', userInput)
 
 /*-------------------------------- Functions --------------------------------*/
 
+/* build an empty playBoard with x rows and y columns and keep track of specific Ts in each cell */
+function buildEmptyPlayBoard(rows, columns) {
+  const emptyPlayBoard = new Array(rows)
+  for (let i = 0; i < rows; i++) {
+    emptyPlayBoard[i] = new Array(columns)
+    for (let j = 0; j < columns; j++) {
+      emptyPlayBoard[i][j] = [0, '']  // each cell is assigned '0' (empty) or '1' (occupied by a T cell), and a specific T class
+    }
+  }
+  return emptyPlayBoard
+}
+
 /* initialize the game */
 function init() {
-  playBoard = Array(20).fill().map(() => Array(10).fill(0))
+  playBoard = buildEmptyPlayBoard(20, 10)
   TSequence = []
   currentT = 0
   nextT = getNextT()
-  lockedT = []
-  lastRow = -1
+  timer = null
   score = 0
   level = 1
   speed = 1000
-  timer = null
   gameOver = false
   scoreEl.innerHTML = score
   levelEl.innerHTML = 1
   displayNextT()
 }
 
+/* reset the game */
 function reset() {
-  /* stop the timer for animation */
+  // stop the timer (animation)
   clearInterval(timer)
   timer = null
-  /* clear all cells from game board */
+  // clear all cells from game board
   while (board.firstChild) {
     board.removeChild(board.firstChild)
   }
-  /* reset Pause button to Start */
+  // reset Pause button to Start
   const pauseBtn = document.getElementById('startBtn')
   if (pauseBtn.innerText === 'Pause') {
     pauseBtn.innerText = 'Start'
   }
-  /* hide game over screen */
+  // hide game over screen
   gameOver = false
   const gameOverScreen = document.getElementById('gameOver')
   gameOverScreen.style.visibility = 'hidden'
-  /* initialize the game */
+  // initialize the game
   init()
 }
 
+/* render the display */
 function render() {
   displayCurrentT()
   displayNextT()
@@ -70,6 +88,8 @@ function render() {
 
 /* button events */
 function gameControls(e) {
+  clickSound.volume = 0.1
+  clickSound.play()
   if (e.target.id === 'startBtn') {
     startGame()
     if (e.target.innerText === 'Start') {
@@ -85,19 +105,21 @@ function gameControls(e) {
 
 /* start the game loop */
 function startGame() {
+  // pause the game 
   if (timer) {
     clearInterval(timer)
     timer = null
-  }
-    /* check if start of game */
-  if (currentT === 0) {
-    currentT = nextT
-    nextT = getNextT()
-    render()
-    timer = setInterval(dropTAnimation, 1000)
   } else {
-      checkLevelUp()
-    }
+    // check if it is the start of the game
+    if (currentT === 0) {
+      currentT = nextT  // generate and display current and next Ts
+      nextT = getNextT()
+      render()
+      timer = setInterval(dropTAnimation, 1000)  // set the speed
+    } else {
+        checkLevelUp()  // check if the game is running and set speed, level and score
+      }
+  }  
 }
 
 /* check if player meets level up conditions */
@@ -115,19 +137,23 @@ function checkLevelUp() {
   }
 }
 
+/* game over screen display and sound effect */
 function showGameOverScreen() {
   const gameOverScreen = document.getElementById('gameOver')
   gameOverScreen.style.visibility = 'visible'
+  gameOverSound.volume = 0.1
+  gameOverSound.play()
 }
 
-/* animation to move T down over time */
+/* continuous animation to move the current T down the playBoard */
 function dropTAnimation() {
-    clearGameBoard()
-    currentT.row = currentT.row + 1
-    lockCurrentT()
-    render()
+    clearGameBoard()  // clear the previous position as the current T changes position
+    currentT.row = currentT.row + 1  // move the current T down by one row
+    lockCurrentT()  // lock the current T
+    render()  //update game board display
   }
 
+/* display current T that is moving down the playBoard */
 function displayCurrentT() {
   for (let i = 0; i < currentT.Tarr.length; i++) {
     for (let j = 0; j < currentT.Tarr[0].length; j++) {
@@ -142,6 +168,7 @@ function displayCurrentT() {
   }
 }
 
+/* display the next T in sequence */
 function displayNextT() {
   while (preview.firstChild) {
     preview.removeChild(preview.firstChild)
@@ -158,36 +185,39 @@ function displayNextT() {
     }
   }
 }
-/* testing - creating many divs */
+
+/* display the locked Ts by looping through playBoard */
 function displayLockedT() {
-  /* check for game over */
+  // check if game over conditions are met
   if (currentT.row === 0) {
-    if (playBoard[currentT.Tarr.length][currentT.column] === 1) {
+    if (playBoard[currentT.Tarr.length][currentT.column][0] === 1) {
       clearInterval(timer)
       timer = null
       gameOver = true
       showGameOverScreen()
     }
   }
-  if (gameOver != true) {
-    lockedT.forEach(t => {
-      for (let i = 0; i < t.Tarr.length; i++) {
-        for (let j = 0; j < t.Tarr[0].length; j++) {
-          if (t.Tarr[i][j] === 1) {
-            const cell = document.createElement('div')
-            cell.classList.add('cell', 'locked', `${t.name}`)
-            cell.dataset.row = t.row + i /* position in board */
-            cell.dataset.column = t.column + j /* position in board */
-            cell.style.gridRow = t.row + i + 1
-            cell.style.gridColumn = t.column + j + 1 
-            board.appendChild(cell)
-          }
-        }  
+
+  if (!gameOver) {
+    for (let row = 0; row < playBoard.length; row++) {
+      for (let column = 0; column < playBoard[row].length; column++) {
+        // loop through the playBoard to select the DOM cell at that row/column
+        const domCell = document.querySelector(`.cell[data-row="${row}"][data-column="${column}"]`);
+        if (!playBoard[row][column][0] || domCell) {  // if there is already a cell in the DOM or playBoard
+          continue  // do not create another DOM cell
+        }  // create DOM cells based on the playBoard data 
+        const cell = document.createElement('div')
+        cell.classList.add('cell', 'locked', `${playBoard[row][column][1]}`)
+        cell.dataset.row = row  // row in playBoard
+        cell.dataset.column = column  // column in playBoard
+        cell.style.gridRow = row + 1
+        cell.style.gridColumn = column + 1
+        board.appendChild(cell)
       }
-    })
+    }
   }
 }
-
+  
 /* get the next T in sequence */
 function getNextT() {
   if (TSequence.length === 0) {
@@ -203,8 +233,8 @@ function generateRandomT() {
     name: Object.keys(tetrominos)[randomNum],
     Tarr: Object.values(tetrominos)[randomNum]
   }
-  let row = 0 /* row at which T spawns on board */
-  let column /* column at which T spawns on board */
+  let row = 0  // row at which T spawns on board
+  let column  // column at which T spawns on board
   if (randomT.name === 'O') {
     column = playBoard[0].length / 2 - 1
   } else {
@@ -215,29 +245,24 @@ function generateRandomT() {
   TSequence.push(randomT)
 }
 
-/* lock the current T position into playBoard */
+/* lock the current T into a playBoard position once it reaches the lowest possible row */
 function lockCurrentT() {
-  /* check if cell ready to be locked to game board */
-  if (!posValid(0)) { 
-    const row = currentT.row
-    const column = currentT.column
-    const name = currentT.name
-    const Tarr = currentT.Tarr
+  // check if the current T is ready to be locked
+  if (!posValid(0)) {  // current T is locked when it touches the game board borders or collides with another T
     for (let i = 0; i < currentT.Tarr.length; i++) {
       for (let j = 0; j < currentT.Tarr[0].length; j++) {
         if (currentT.Tarr[i][j] === 1) {
-          playBoard[currentT.row + i][currentT.column + j] = 1
+          playBoard[currentT.row + i][currentT.column + j][0] = 1  // lock the current T into the playBoard  
+          playBoard[currentT.row + i][currentT.column + j][1] = currentT.name  // assign a T class to the cell
         }
       }
     }
-    /* play sound when a T is locked */
+    // play a sound when a T is locked
     stickSound.volume = 0.1
     stickSound.play()
-    /* add current T to locked T array */
-    lockedT.push({name, row, column, Tarr})
-    /* clear out full rows */ 
+    // clear out full rows 
     clearFullRows()
-    /* get new T */
+    // get new Ts
     currentT = nextT
     nextT = getNextT()
   }
@@ -245,12 +270,17 @@ function lockCurrentT() {
 
 /* clear full rows */
 function clearFullRows() {
-  /* get the number of filled rows */
+  // get the number of filled rows
   let filledRows = 0
-  let lastFilledRow = 0
+  let lastFilledRow = -1
   let firstFilledRow = -1
+  // loop through playBoard from the bottom up and find rows with all cells filled
   for (let row = playBoard.length - 1; row >= 0; row--) {
-    if (playBoard[row].every(column => column === 1)) {
+    if (playBoard[row].every(column => column[0] === 1)) {
+      // select all cells from the filled rows and remove them 
+      const cellsToRemove = document.querySelectorAll(`.cell[data-row="${row}"]`)
+      cellsToRemove.forEach(cell => cell.remove())
+      // find the number of filled rows, first and last row filled
       if (firstFilledRow === -1) {
         firstFilledRow = row
       }
@@ -258,85 +288,71 @@ function clearFullRows() {
       lastFilledRow = row
     }
   }
-  /* shift the rows above the filled rows down */
-  let next = 0
+  // shift the rows above the filled rows down
+  let next = 0  // loop through each row from the bottom of the playBoard
   for (let row = lastFilledRow - 1; row >= 0; row--) {
     for (let column = 0; column < playBoard[row].length; column++) {
-      if (firstFilledRow - next > 0) {
-        playBoard[firstFilledRow - next][column] = playBoard[row][column]
-        /* play sound if a line is cleared */
+      if (firstFilledRow - next >= 0) {  // start from the first filled row
+        playBoard[firstFilledRow - next][column][0] = playBoard[row][column][0]  // copy all cells of the row above the last filled row to the first filled row
+        playBoard[firstFilledRow - next][column][1] = playBoard[row][column][1]
+        playBoard[row][column][0] = 0  // remove all cells from the filled row
+        playBoard[row][column][1] = ''
+        const domCell = document.querySelector(`.cell[data-row="${row}"][data-column="${column}"]`);  // select all DOM cells from the filled row and remove them
+        if (domCell) {
+          domCell.remove()
+        }
+        // play a sound if a line is cleared
         successSound.volume = 0.1
         successSound.play()
       }
     }
-    next++
-  }
-  /* add back empty rows to playBoard */
-  for (let row = lastFilledRow - firstFilledRow; row >= 0; row--) {
-    playBoard[row] = Array(10).fill(0)
+    next++  // move to the next filled row and repeat
   }
 
-  // /* get the score for each cleared row */
+  // update and display the score and level for each cleared row
   score = score + filledRows * 10
   scoreEl.innerHTML = score
   checkLevelUp()
-  
-  /* remove filled rows from the game board */
-  for (let row = firstFilledRow; row >= lastFilledRow; row--) {
-    const cellsToRemove = document.querySelectorAll(`.cell[data-row="${row}"]`)
-    const cellsToRemoveArray = Array.from(cellsToRemove)
-    cellsToRemoveArray.forEach(cell => cell.parentNode.removeChild(cell))
-    
-    const cellsToShift = document.querySelectorAll(`.cell[data-row="${row - 1}"]`)
-    
-    // Shift elements down one row
-    cellsToShift.forEach(cell => {
-      const currentRow = parseInt(cell.getAttribute('data-row'))
-      cell.setAttribute('data-row', currentRow)
-      cell.setAttribute('class', currentRow)
-    })
-  }
 }
 
-/* Listen to keyboard events */
+/* listen to keyboard events from player */
 function userInput(e) {
-  /* Up arrow */
+  // Up arrow (rotate)
   clearGameBoard()
   if (e.which === 38) {
     if (posValid(0)) {
       rotateCurrentT(currentT)
     }
   
-    /* Down arrow */
+    // Down arrow
   } else if (e.which === 40) {
     if (posValid(0)) {
-      currentT.row = currentT.row + 1
+      currentT.row = currentT.row + 1  // move down if possible
     } else {
-      lockCurrentT()
+      lockCurrentT()  // lock T into playBoard if its position is invalid
     }
 
-    /* Left arrow */
+    // Left arrow
   } else if (e.which === 37) {
     if (posValid(-1)) {
       currentT.column = currentT.column - 1
     }
 
-    /* Right arrow */
+    // Right arrow
   } else if (e.which === 39) {
     if (posValid(1)) {
       currentT.column = currentT.column + 1
     }
   }
 
-    /* Space bar */
+    // Space bar (drop to the lowest row available)
   if (e.which === 32) {
     for (let row = playBoard.length - 1; row >= 0; row--) {
-      if (playBoard[row][currentT.column] === 0) {
-        lastRow = row
-        break
+      if (playBoard[row][currentT.column][0] === 0) {  // lowest available row
+        dropToLastRowRecursive()  // move the T down at low as possible
+        break  // stop the loop once the lowest row available is found
       }
     }
-    dropToLastRowRecursive()
   }
   render()
 }
@@ -347,6 +363,7 @@ function rotateCurrentT() {
   currentT.Tarr = after
 }
 
+/* move the T down one row at a time until it can no longer be moved down */
 function dropToLastRowRecursive() {
   if (posValid(0)) {
     currentT.row += 1
@@ -356,18 +373,19 @@ function dropToLastRowRecursive() {
   }
 }
 
+/* check if current T position is valid */
 function posValid(side) {
   for (let i = 0; i < currentT.Tarr.length; i++) {
     for (let j = 0; j < currentT.Tarr[0].length; j++) {
       if (currentT.Tarr[i][j] === 1) {
         const row = currentT.row + i
         const column = currentT.column + j + side
-        /* check if current T is out of playBoard */
+        // check if the current T is outside of the playBoard's dimensions
         if (row + 1 >= playBoard.length || column < 0 || column >= playBoard[0].length) {
           return false
         }
-        /* check if current T collides with an existing T on playBoard */
-        if (playBoard[row+1][column] === 1) {
+        // check if the current T collides with an existing T on the playBoard
+        if (playBoard[row + 1][column][0] === 1) {
           return false
         }
       }
@@ -376,20 +394,19 @@ function posValid(side) {
   return true
 } 
 
+/* clear the previous position of the current T as it moves inside the playBoard */
 function clearGameBoard() {
   for (let i = 0; i < currentT.Tarr.length; i++) {
     for (let j = 0; j < currentT.Tarr[0].length; j++) {
       if (currentT.Tarr[i][j] === 1) {
-        const row = currentT.row + i
-        const column = currentT.column + j
-        /* clear playBoard value of all cells except for locked Ts */
-        if (!lockedT.some(t => t.row === row && t.column === column)) {
-          playBoard[row][column] = 0
+        if (!playBoard.some(row => row.some(cell => cell[0]))) {  // update the playBoard value to '0' for each cell of the current T
+          playBoard[currentT.row + i][currentT.column + j][0] = 0
+          playBoard[currentT.row + i][currentT.column + j][1] = ''       
         }
       }
     }
   }
-  /* clear non-locked cells off the game board */
+  // remove the non-locked DOM cells of the current T off the game board display
   const nonLockedCells = board.querySelectorAll('.cell:not(.locked)')
   nonLockedCells.forEach(cell => board.removeChild(cell))
 }

@@ -31,9 +31,9 @@ Welcome to ***TetraZoo***, where the classic tile-matching puzzle ***Tetris*** m
 5. Levels: The game becomes faster and more challenging as you advance through levels. Can you reach the highest level?
 
 ### Screenshots
-[Screenshot of gameplay](./assets/images/tetraZoo.png)
-[Screenshot of gameplay](./assets/images/tetraZoo2.png)
-[Screenshot of gameplay](./assets/images/tetraZooClip.gif)
+![Screenshot of gameplay](./assets/images/tetraZoo.png)
+![Screenshot of gameplay](./assets/images/tetraZoo2.png)
+![Screenshot of gameplay](./assets/images/tetraZooClip.gif)
 
 ### Technologies Used
 * HTML, CSS, JavaScript

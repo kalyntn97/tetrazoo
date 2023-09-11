@@ -7,6 +7,8 @@ const successSound = new Audio ('../assets/audio/success.wav')
 const stickSound = new Audio ('../assets/audio/stick.wav')
 const gameOverSound = new Audio ('../assets/audio/sadMeow.wav')
 const clickSound = new Audio ('../assets/audio/click.mp3')
+const gameStartSound = new Audio ('../assets/audio/bird.wav')
+const bgMusic = new Audio ('../assets/audio/bgMusic.wav')
 
 
 /*---------------------------- Variables (state) ----------------------------*/
@@ -22,7 +24,10 @@ const levelEl = document.getElementById('level')
 
 
 /*----------------------------- Event Listeners -----------------------------*/
-document.addEventListener('DOMContentLoaded', init)
+document.addEventListener('DOMContentLoaded', () => { 
+  init()
+  playBgMusic()
+})
 buttons.forEach(button => button.addEventListener('click', gameControls))
 document.addEventListener('keydown', userInput)
 
@@ -57,6 +62,12 @@ function init() {
   displayNextT()
 }
 
+/* play background music on loading */
+function playBgMusic() {
+ 
+}
+
+
 /* reset the game */
 function reset() {
   // stop the timer (animation)
@@ -68,8 +79,8 @@ function reset() {
   }
   // reset Pause button to Start
   const pauseBtn = document.getElementById('startBtn')
-  if (pauseBtn.innerText === 'Pause') {
-    pauseBtn.innerText = 'Start'
+  if (pauseBtn.innerText === '⏸') {
+    pauseBtn.innerText = '▶'
   }
   // hide game over screen
   gameOver = false
@@ -90,12 +101,23 @@ function render() {
 function gameControls(e) {
   clickSound.volume = 0.1
   clickSound.play()
+  if (e.target.id === 'bgMusicBtn') {
+    if (e.target.innerText === '🎧') {
+      e.target.innerText = '🔇'
+      bgMusic.volume = 0.25
+      bgMusic.play()
+      bgMusic.loop = true
+    } else {
+      e.target.innerText = '🎧'
+      bgMusic.pause()
+    }
+  }
   if (e.target.id === 'startBtn') {
     startGame()
-    if (e.target.innerText === 'Start') {
-      e.target.innerText = 'Pause'
-    } else if (e.target.innerText === 'Pause') {
-      e.target.innerText = 'Start'
+    if (e.target.innerText === '▶') {
+      e.target.innerText = '⏸'
+    } else {
+      e.target.innerText = '▶'
     }
   }
   if (e.target.id === 'resetBtn') {
@@ -112,6 +134,7 @@ function startGame() {
   } else {
     // check if it is the start of the game
     if (currentT === 0) {
+      showGameStartScreen()  //show start game screen
       currentT = nextT  // generate and display current and next Ts
       nextT = getNextT()
       render()
@@ -135,6 +158,18 @@ function checkLevelUp() {
       return
     }
   }
+}
+
+/* start screen display and sound effect */
+function showGameStartScreen() {
+  const gameStartScreen = document.getElementById('gameStart')
+  gameStartScreen.style.visibility = 'visible'  // show screen for 1s
+  gameStartSound.volume = 0.2
+  gameStartSound.play()
+  setTimeout(e => {
+    gameStartScreen.style.visibility = 'hidden'
+  }, 1000)
+
 }
 
 /* game over screen display and sound effect */

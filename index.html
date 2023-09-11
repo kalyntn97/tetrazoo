@@ -15,27 +15,34 @@
     <title>MeowTris</title>
 </head>
 <body>
-    <h1>Tetris</h1>
     <div class="box">
-        <div class="leftColumn">
-            <p>Score: <span id="score"></span></p>
-            <p>Level: <span id="level"></span></p>
-            <p id="instructions">Instructions: <br>
-                Space: Drop <br>
-                ↓: Move Down <br>
-                ↑: Rotate <br>
-                ←→: Move left/right
-            </p>
-        </div>
-        <div class="locked-container"></div>
-        <div class="board"></div>
-        <div id="gameOver" class="screen">
-            <h2>Game Over!</h2>
-        </div>
-        <div class="rightColumn">
-            <div class="preview"></div>
-            <button class="button" id="startBtn">Start</button>
-            <button class="button" id="resetBtn">Reset</button>
-        </div>
+        <div>
+        <img src="./assets/images/tetraZoo.png" alt="TetraZoo"/>
+        </div> 
+        <div class="main">
+            <div class="leftColumn">
+                <p>Score: <span id="score"></span></p>
+                <p>Level <span id="level"></span></p>
+                <p id="instructions">Instructions: <br>
+                    Space: Drop <br>
+                    ↓: Move Down <br>
+                    ↑: Rotate <br>
+                    ←→: Move left/right
+                </p>
+            </div>
+            <div class="board"></div>
+            <div id="gameStart" class="screen">
+                <h2>Game Start!</h2>
+            </div>
+            <div id="gameOver" class="screen">
+                <h2>Game Over!</h2>
+            </div>
+            <div class="rightColumn">
+                <div class="preview"></div>
+                <button class="button" id="startBtn">▶</button>
+                <button class="button" id="resetBtn">↩</button>
+                <button class="button" id="bgMusicBtn">🎧</button>
+            </div>
+        </div> 
 </body>
 </html>
